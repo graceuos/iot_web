@@ -17,8 +17,8 @@
     <!-- MQTT 라이브러리 -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
-      // MQTT 브로커 주소 (WebSocket용 포트 9001)
-      const broker = 'wss://damoa.io:9001/mqtt';
+      // MQTT 브로커 주소 (WebSocket용 포트 1883)
+      const broker = 'wss://damoa.io:1883/mqtt';
       const topic = 'ewha/2567010'; // ← 본인 학번으로 수정!
 
       const client = mqtt.connect(broker);
