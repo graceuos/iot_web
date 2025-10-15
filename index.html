@@ -1,55 +1,57 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>ESP32 MQTT IoT Web</title>
-  </head>
-  <body>
-    <h1>🌡️ IoT MQTT 실습 페이지</h1>
-    <p>ESP32가 전송한 온도, 습도 정보를 MQTT로 실시간 표시합니다.</p>
-
-    <p><b>Temperature:</b> <span id="temp">--</span> °C</p>
-    <p><b>Humidity:</b> <span id="humi">--</span> %</p>
-
-    <hr>
-    <p id="status">Connecting to MQTT...</p>
-
-    <!-- MQTT 라이브러리 -->
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>My MQTT Web</title>
+    <h3>나의 웹 (2567010, 김현지)</h3>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
-      // MQTT 브로커 주소 (WebSocket용 포트 9001)
-      const broker = 'wss://damoa.io:9001/mqtt';
-      const topic = 'ewha/2567010'; // ← 본인 학번으로 수정!
+        const brokerUrl = 'wss://test.mosquitto.org:8081';   // ✅ 수정 ①
 
-      const client = mqtt.connect(broker);
+        const clientId = 'iot-client-' + Math.random().toString(16).substr(2, 8);
+        const options = { clientId: clientId };
 
-      // 연결 성공 시
-      client.on('connect', function () {
-        document.getElementById("status").innerText = "✅ Connected to MQTT broker";
-        client.subscribe(topic);
-        console.log("Subscribed to", topic);
+        console.log(`MQTT 브로커(${brokerUrl})에 접속 시도 중...`);
+        const client = mqtt.connect(brokerUrl, options);
 
-        // 웹 접속 시 1회 checkin 메시지 발행
-        client.publish(topic, 'checkin from web');
-      });
+        client.on('connect', () => {
+            console.log(`✅ 접속 성공! (클라이언트 ID: ${clientId})`);
 
-      // 메시지 수신 시
-      client.on('message', function (topic, message) {
-        console.log("Message received:", message.toString());
-        try {
-          const data = JSON.parse(message.toString());
-          document.getElementById("temp").innerText = data.temperature;
-          document.getElementById("humi").innerText = data.humidity;
-        } catch (e) {
-          // JSON 형식이 아닐 경우 그대로 표시
-          document.getElementById("status").innerText = "📩 " + message.toString();
-        }
-      });
+            const topic = `ewha/2567010`;   // ✅ 수정 ②
+            client.subscribe(topic, (err) => {
+                if (!err) {
+                    console.log(`📄 토픽 구독 성공: ${topic}`);
 
-      client.on('error', function (error) {
-        document.getElementById("status").innerText = "❌ MQTT connection error";
-        console.error(error);
-      });
+                    client.publish('ewha/checkin', "2567010 김현지");  // ✅ 수정 ③
+                } else {
+                    console.error('토픽 구독 오류:', err);
+                }
+            });
+        });
+
+        client.on('message', (topic, message) => {
+            console.log(`${topic} ${message.toString()}`);
+
+            const mainDiv = document.getElementById('main');
+            const messageHTML = `
+                <div class="message-item">
+                    <span>${message.toString()}</span>
+                </div>
+            `;
+            mainDiv.innerHTML = messageHTML;
+            mainDiv.scrollTop = mainDiv.scrollHeight;
+        });
+
+        client.on('error', (err) => {
+            console.error('연결 오류:', err);
+            client.end();
+        });
     </script>
-  </body>
+</head>
+
+<body>
+    <div id="main" style="font-size: 1.5em; color: darkblue; margin: 20px;">
+        MQTT 메시지를 기다리는 중...
+    </div>
+</body>
 </html>
