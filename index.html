@@ -6,8 +6,7 @@
     <h3>나의 웹 (2567010, 김현지)</h3>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
-        const brokerUrl = 'wss://test.mosquitto.org:8081';   // ✅ 수정 ①
-
+        const brokerUrl = 'wss://test.mosquitto.org:1883';   
         const clientId = 'iot-client-' + Math.random().toString(16).substr(2, 8);
         const options = { clientId: clientId };
 
@@ -17,12 +16,12 @@
         client.on('connect', () => {
             console.log(`✅ 접속 성공! (클라이언트 ID: ${clientId})`);
 
-            const topic = `ewha/2567010`;   // ✅ 수정 ②
+            const topic = `ewha/2567010`;   ②
             client.subscribe(topic, (err) => {
                 if (!err) {
                     console.log(`📄 토픽 구독 성공: ${topic}`);
 
-                    client.publish('ewha/checkin', "2567010 김현지");  // ✅ 수정 ③
+                    client.publish('ewha/checkin', "2567010 김현지"); 
                 } else {
                     console.error('토픽 구독 오류:', err);
                 }
