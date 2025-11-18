@@ -6,7 +6,7 @@
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
         // 1) WebSocket용 브로커 URL (test.mosquitto.org)
-        const brokerUrl = 'wss://test.mosquitto.org:1883';
+        const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
 
         // 2) 클라이언트 ID 옵션
         const clientId = 'iot-client-' + Math.random().toString(16).substr(2, 8);
