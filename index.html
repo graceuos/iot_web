@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>My MQTT Web</title>
-    <h3>나의 웹 (2567010, 김현지)</h3>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
-        const brokerUrl = 'wss://test.mosquitto.org:1883';   
+        // 1) WebSocket용 브로커 URL (test.mosquitto.org)
+        const brokerUrl = 'wss://test.mosquitto.org:8081';
+
+        // 2) 클라이언트 ID 옵션
         const clientId = 'iot-client-' + Math.random().toString(16).substr(2, 8);
         const options = { clientId: clientId };
 
@@ -14,14 +16,14 @@
         const client = mqtt.connect(brokerUrl, options);
 
         client.on('connect', () => {
-            console.log(`✅ 접속 성공! (클라이언트 ID: ${clientId})`);
+            console.log(`접속 성공 (클라이언트 ID: ${clientId})`);
 
-            const topic = `ewha/2567010`;   ②
+            const topic = 'ewha/2567010';
             client.subscribe(topic, (err) => {
                 if (!err) {
-                    console.log(`📄 토픽 구독 성공: ${topic}`);
-
-                    client.publish('ewha/checkin', "2567010 김현지"); 
+                    console.log(`토픽 구독 성공: ${topic}`);
+                    // 체크인 메시지 (옵션)
+                    client.publish('ewha/checkin', '2567010 김현지');
                 } else {
                     console.error('토픽 구독 오류:', err);
                 }
@@ -49,6 +51,7 @@
 </head>
 
 <body>
+    <h3>나의 웹 (2567010, 김현지)</h3>
     <div id="main" style="font-size: 1.5em; color: darkblue; margin: 20px;">
         MQTT 메시지를 기다리는 중...
     </div>
